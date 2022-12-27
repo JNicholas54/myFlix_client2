@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import "./movie-card.scss";
+
 //This is the moviecard function component
 export const MovieCard = ({movie, onMovieClick }) => {
     return <div onClick={() => { onMovieClick(movie); }}>{movie.title}</div>;
