@@ -17,9 +17,12 @@ export const MainView = () => {
                     id: doc.key,
                     title: doc.title,
                     director: doc.director_name?.[0]
-                };
+                }
+            .catch((err) => {
+                console.error(error);
+                res.status(500).send('Error: ' + err);
+                })    
             });
-        
         setMovies(movies);
     });
 }, []);
