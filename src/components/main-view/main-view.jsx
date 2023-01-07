@@ -12,19 +12,8 @@ export const MainView = () => {
         fetch("https://guarded-wave-99547.herokuapp.com/movies")
             .then((response) => response.json())
             .then((data) => {
-            const movies = data.docs.map((doc) => {
-                return {
-                    id: doc.key,
-                    title: doc.title,
-                    director: doc.director_name?.[0]
-                }
-            .catch((err) => {
-                console.error(error);
-                res.status(500).send('Error: ' + err);
-                })    
+                setMovies(data);
             });
-        setMovies(movies);
-    });
 }, []);
 
 const [selectedMovie, setSelectedMovie] = useState(null);
@@ -43,7 +32,7 @@ const [selectedMovie, setSelectedMovie] = useState(null);
             <div>
                 {movies.map((movie) => (
                     <MovieCard
-                    key={movie.id}
+                    key={movie.Title}
                     movie={movie}
                     onMovieClick={(newSelectedMovie) => {
                         setSelectedMovie(newSelectedMovie);
