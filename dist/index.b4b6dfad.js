@@ -27130,49 +27130,310 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _movieCard = require("../movie-card/movie-card");
 var _movieView = require("../movie-view/movie-view");
+var _loginView = require("../login-view/login-view");
+var _registrationView = require("../registration-view/registration-view");
 var _s = $RefreshSig$();
 const MainView = ()=>{
     _s();
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const storedToken = localStorage.getItem("token");
+    const [user, setUser] = (0, _react.useState)(storedUser ? storedUser : null);
+    const [token, setToken] = (0, _react.useState)(storedToken ? storedToken : null);
     const [movies, setMovies] = (0, _react.useState)([]);
-    (0, _react.useEffect)(()=>{
-        fetch("https://guarded-wave-99547.herokuapp.com/movies").then((response)=>response.json()).then((data)=>{
-            setMovies(data);
-        });
-    }, []);
     const [selectedMovie, setSelectedMovie] = (0, _react.useState)(null);
+    (0, _react.useEffect)(()=>{
+        if (!token) return;
+        fetch("https://guarded-wave-99547.herokuapp.com/movies", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }).then((response)=>response.json()).then((movies)=>{
+            setMovies(movies);
+        });
+    }, [
+        token
+    ]);
+    if (!user) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loginView.LoginView), {
+                onLoggedIn: (user, token)=>{
+                    setUser(user);
+                    setToken(token);
+                }
+            }, void 0, false, {
+                fileName: "src/components/main-view/main-view.jsx",
+                lineNumber: 35,
+                columnNumber: 13
+            }, undefined),
+            "or",
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _registrationView.RegistrationView), {}, void 0, false, {
+                fileName: "src/components/main-view/main-view.jsx",
+                lineNumber: 40,
+                columnNumber: 13
+            }, undefined)
+        ]
+    }, void 0, true);
     if (selectedMovie) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieView.MovieView), {
         movie: selectedMovie,
         onBackClick: ()=>setSelectedMovie(null)
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 23,
+        lineNumber: 46,
         columnNumber: 18
     }, undefined);
     if (movies.length === 0) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         children: "The list is empty!"
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 28,
+        lineNumber: 51,
         columnNumber: 16
     }, undefined);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        children: movies.map((movie)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
-                movie: movie,
-                onMovieClick: (newSelectedMovie)=>{
-                    setSelectedMovie(newSelectedMovie);
-                }
-            }, movie.Title, false, {
+        children: [
+            movies.map((movie)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCard.MovieCard), {
+                    movie: movie,
+                    onMovieClick: (newSelectedMovie)=>{
+                        setSelectedMovie(newSelectedMovie);
+                    }
+                }, movie.Title, false, {
+                    fileName: "src/components/main-view/main-view.jsx",
+                    lineNumber: 57,
+                    columnNumber: 21
+                }, undefined)),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: ()=>{
+                    setUser(null);
+                    setToken(null);
+                },
+                children: "Logout"
+            }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 34,
-                columnNumber: 21
-            }, undefined))
-    }, void 0, false, {
+                lineNumber: 64,
+                columnNumber: 13
+            }, undefined)
+        ]
+    }, void 0, true, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 32,
+        lineNumber: 55,
         columnNumber: 13
     }, undefined);
-};
-_s(MainView, "llzgrUkvR/+OoCNfiqlA1H2LLFI=");
+}; //============================ BELOW ARE THE MOVIES AND USERS FROM MY DATABASE ============================
+ // ============================================ MOVIES ====================================================
+ /* {
+  _id: "633e21c719c1bf1889036e49",
+  Title: 'Good Will Hunting',
+  Story: 'Will Hunting, a janitor at MIT, has a gift for mathematics but needs help from a psychologist to find direction in his life.',
+  Genre: {
+    Name: 'Drama',
+    Description: 'In film and television, drama is a category or genre of narrative fiction (or semi-fiction) intended to be more serious than humorous in tone.'
+  },
+  Director: {
+    Name: 'Gus Van Sant',
+    Bio: 'Gus Green Van Sant Jr. is an American filmmaker, painter, screenwriter, photographer and musician from Louisville, Kentucky who is known for directing films such as Good Will Hunting, the 1998 remake of Psycho, Gerry, Elephant, My Own Private Idaho, To Die For, Milk, Last Days, Finding Forrester, Promised Land, Drugstore Cowboy and Mala Noche.',
+    dob: 'July 24, 1952'
+  },
+  Stars: 'Matt Damon, Robin Williams, Ben Affleck, Stellan Skarsgård, Minnie Driver',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BOTI0MzcxMTYtZDVkMy00NjY1LTgyMTYtZmUxN2M3NmQ2NWJhXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f55bc19c1bf1889036e4a",
+  Title: 'A Few Good Men',
+  Story: 'When cocky military lawyer Lt. Daniel Kaffee and his co-counsel, Lt. Cmdr. JoAnne Galloway, are assigned to a murder case, they uncover a hazing ritual that could implicate high-ranking officials such as shady Col. Nathan Jessep.',
+  Genre: {
+    Name: 'Drama',
+    Description: 'In film and television, drama is a category or genre of narrative fiction (or semi-fiction) intended to be more serious than humorous in tone.'
+  },
+  Director: {
+    Name: 'Rob Reiner',
+    Bio: 'Robert Reiner was born in New York City, to Estelle Reiner (née Lebost) and Emmy-winning actor, comedian, writer, and producer Carl Reiner. As a child, his father was his role model, as Carl Reiner created and starred in The Dick Van Dyke Show.',
+    dob: 'March 6, 1947'
+  },
+  Stars: 'Tom Cruise, Jack Nicholson, Demi Moore, Kevin Bacon, Kiefer Sutherland',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BMmRlZDQ1MmUtMzE2Yi00YTkxLTk1MGMtYmIyYWQwODcxYzRlXkEyXkFqcGdeQXVyNTI4MjkwNjA@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f591c19c1bf1889036e4b",
+  Title: 'My Cousin Vinny',
+  Story: 'Two New Yorkers accused of murder in rural Alabama while on their way back to college call in the help of one of their cousins, a loudmouth lawyer with no trial experience.',
+  Genre: {
+    Name: 'Comedy',
+    Description: 'Comedy is a genre of fiction that consists of discourses or works intended to be humorous or amusing by inducing laughter, especially in theatre, film, stand-up comedy, television, radio, books, or any other entertainment medium.'
+  },
+  Director: {
+    Name: 'Johnathan Lynn',
+    Bio: 'Jonathan Lynn and Antony Jay created and wrote every episode of the acclaimed BBC political comedy series Yes Minister (1980) and Yes, Prime Minister (1986).',
+    dob: 'April 3, 1943'
+  },
+  Stars: 'Joe Pesci, Marisa Tomei, Ralph Macchio',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BMTQxNDYzMTg1M15BMl5BanBnXkFtZTgwNzk4MDgxMTE@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f5ad319c1bf1889036e4c",
+  Title: 'Cast Away',
+  Story: 'A FedEx executive undergoes a physical and emotional transformation after crash landing on a deserted island.',
+  Genre: {
+    Name: 'Adventure',
+    Description: 'The adventure genre consists of books where the protagonist goes on an epic journey, either personally or geographically.'
+  },
+  Director: {
+    Name: 'Robert Zemeckis',
+    Bio: "A whiz-kid with special effects, Robert is from the Spielberg camp of film-making (Steven Spielberg produced many of his films). Usually working with writing partner Bob Gale, Robert's earlier films show he has a talent for zany comedy (Romancing the Stone (1984), 1941 (1979)) and special effect vehicles (Who Framed Roger Rabbit (1988) and Back to the Future (1985)). His later films have become more serious, with the hugely successful Tom Hanks vehicle Forrest Gump (1994) and the Jodie Foster film Contact (1997), both critically acclaimed movies.",
+    dob: 'May 14, 1951'
+  },
+  Stars: 'Tom Hanks, Helen Hunt, Paul Sanchez',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BN2Y5ZTU4YjctMDRmMC00MTg4LWE1M2MtMjk4MzVmOTE4YjkzXkEyXkFqcGdeQXVyNTc1NTQxODI@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f5c2119c1bf1889036e4d",
+  Title: 'A Nightmare on Elm Street',
+  Story: 'Teenager Nancy Thompson must uncover the dark truth concealed by her parents after she and her friends become targets of the spirit of a serial killer with a bladed glove in their dreams, in which if they die, it kills them in real life.',
+  Genre: {
+    Name: 'Horror',
+    Description: 'Horror is a genre of fiction whose purpose is to create feelings of fear, dread, repulsion, and terror in the audience'
+  },
+  Director: {
+    Name: 'Wes Craven',
+    Bio: 'Wesley Earl Craven was born in Cleveland, Ohio, to Caroline (Miller) and Paul Eugene Craven. He had a midwestern suburban upbringing. His first feature film was The Last House on the Left (1972), which he wrote, directed, and edited.',
+    dob: 'August 2, 1939'
+  },
+  Stars: 'Heather Langenkamp, Johnny Depp, Robert Englund',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BNzFjZmM1ODgtMDBkMS00NWFlLTg2YmUtZjc3ZTgxMjE1OTI2L2ltYWdlXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f5d6319c1bf1889036e4e",
+  Title: 'Scream 2',
+  Story: 'Two years after the first series of murders, as Sidney acclimates to college life, someone donning the Ghostface costume begins a new string of killings.',
+  Genre: {
+    Name: 'Horror',
+    Description: 'Horror is a genre of fiction whose purpose is to create feelings of fear, dread, repulsion, and terror in the audience'
+  },
+  Director: {
+    Name: 'Wes Craven',
+    Bio: 'Wesley Earl Craven was born in Cleveland, Ohio, to Caroline (Miller) and Paul Eugene Craven. He had a midwestern suburban upbringing. His first feature film was The Last House on the Left (1972), which he wrote, directed, and edited.',
+    dob: 'August 2, 1939'
+  },
+  Stars: 'Neve Campbell, Courteney Cox, David Arquette',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BMTIxNTMzNzYtNzA3NC00MzgwLTlhNGYtMDEyYTNlZjcwZTNiXkEyXkFqcGdeQXVyNDAxNjkxNjQ@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f61f43d2400bbc5625cf6",
+  Title: 'A Beautiful Mind',
+  Story: 'After John Nash, a brilliant but asocial mathematician, accepts secret work in cryptography, his life takes a turn for the nightmarish.',
+  Genre: {
+    Name: 'Drama',
+    Description: 'In film and television, drama is a category or genre of narrative fiction (or semi-fiction) intended to be more serious than humorous in tone.'
+  },
+  Director: {
+    Name: 'Ron Howard',
+    Bio: "Academy Award-winning filmmaker Ron Howard is one of this generation's most popular directors. From the critically acclaimed dramas A Beautiful Mind (2001) and Apollo 13 (1995) to the hit comedies Parenthood (1989) and Splash (1983), he has created some of Hollywood's most memorable films.",
+    dob: 'March 1, 1954'
+  },
+  Stars: 'Russel Crowe, Ed Harris, Jennifer Connelly',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BMzcwYWFkYzktZjAzNC00OGY1LWI4YTgtNzc5MzVjMDVmNjY0XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f62f23d2400bbc5625cf7",
+  Title: 'Remember the Titans',
+  Story: 'The true story of a newly appointed African-American coach and his high school team on their first season as a racially integrated unit.',
+  Genre: {
+    Name: 'Drama',
+    Description: 'In film and television, drama is a category or genre of narrative fiction (or semi-fiction) intended to be more serious than humorous in tone.'
+  },
+  Directors: {
+    Name: 'Boaz Yakin',
+    Bio: 'Boaz Yakin was born in 1966 in New York City, New York, USA. He is a writer and producer, known for Fresh (1994), Remember the Titans (2000) and The Harder They Fall (2021).',
+    dob: 'June 20, 1966'
+  },
+  Stars: 'Denzel Washington, Will Patton, Wood Harris',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BYThkMzgxNjEtMzFiOC00MTI0LWI5MDItNDVmYjA4NzY5MDQ2L2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f646a3d2400bbc5625cf8",
+  Title: 'Jurassic Park',
+  Story: "A pragmatic paleontologist touring an almost complete theme park on an island in Central America is tasked with protecting a couple of kids after a power failure causes the park's cloned dinosaurs to run loose",
+  Genre: {
+    Name: 'Action',
+    Description: 'Action film is a film genre in which the protagonist is thrust into a series of events that typically involve violence and physical feats.'
+  },
+  Director: {
+    Name: 'Steven Speilberg',
+    Bio: "One of the most influential personalities in the history of cinema, Steven Spielberg is Hollywood's best known director and one of the wealthiest filmmakers in the world. He has an extraordinary number of commercially successful and critically acclaimed credits to his name, either as a director, producer or writer since launching the summer blockbuster with Jaws (1975), and he has done more to define popular film-making since the mid-1970s than anyone else.",
+    dob: 'December 18, 1946'
+  },
+  Stars: 'Sam Worthington, Zoe Saldana, Siguorney Weaver',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BMjM2MDgxMDg0Nl5BMl5BanBnXkFtZTgwNTM2OTM5NDE@._V1_UX67_CR0,0,67,98_AL_.jpg'
+},
+{
+  _id: "633f66483d2400bbc5625cf9",
+  Title: 'Avatar',
+  Story: 'A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.',
+  Genre: {
+    Name: 'Fantasy',
+    Description: 'Fantasy fiction is a genre of writing in which the plot could not happen in real life (as we know it, at least).'
+  },
+  Director: {
+    Name: 'James Cameron',
+    Bio: 'James Francis Cameron was born on August 16, 1954 in Kapuskasing, Ontario, Canada. He moved to the United States in 1971. The son of an engineer, he majored in physics at California State University before switching to English, and eventually dropping out. He then drove a truck to support his screenwriting ambition. James Cameron is now one of the most sought-after directors in Hollywood.',
+    dob: 'August 16, 1954'
+  },
+  Stars: 'Sam Worthington, Zoe Saldana, Siguorney Weaver',
+  ImgURL: 'https://m.media-amazon.com/images/M/MV5BNjA3NGExZDktNDlhZC00NjYyLTgwNmUtZWUzMDYwMTZjZWUyXkEyXkFqcGdeQXVyMTU1MDM3NDk0._V1_UX67_CR0,0,67,98_AL_.jpg'
+}
+
+//      ============================================ USERS ====================================================
+[
+  {
+    _id: ObjectId("6350331f36edf6061b707892"),
+    Username: 'Jeremy',
+    Password: 'jeremypass',
+    Email: 'jeremy@email.com',
+    Birthday: ISODate("1992-01-27T08:00:00.000Z"),
+    FavoriteMovies: []
+  },
+  {
+    _id: ObjectId("635033c936edf6061b707893"),
+    Username: 'Melissa',
+    Password: 'melissapass',
+    Email: 'melissa@email.com',
+    Birthday: ISODate("1991-09-24T07:00:00.000Z"),
+    FavoriteMovies: []
+  },
+  {
+    _id: ObjectId("6350343436edf6061b707894"),
+    Username: 'Fiona',
+    Password: 'fionapass',
+    Email: 'fiona@email.com',
+    Birthday: ISODate("2023-01-15T08:00:00.000Z"),
+    FavoriteMovies: []
+  },
+  {
+    _id: ObjectId("6350349f36edf6061b707895"),
+    Username: 'Dawn',
+    Password: 'dawnpass',
+    Email: 'dawn@email.com',
+    Birthday: ISODate("1969-01-08T08:00:00.000Z"),
+    FavoriteMovies: []
+  },
+  {
+    _id: ObjectId("635035ab36edf6061b707896"),
+    Username: 'Keith',
+    Password: 'keithpass',
+    Email: 'keith@email.com',
+    Birthday: ISODate("1965-10-12T07:00:00.000Z"),
+    FavoriteMovies: []
+  },
+  {
+    _id: ObjectId("63613a9595f339b8176ed28c"),
+    Username: 'Frank',
+    Password: 'frankpass',
+    Email: 'frank@email.com',
+    Birthday: ISODate("1966-06-24T07:00:00.000Z"),
+    FavoriteMovies: [],
+    __v: 0
+  }
+]
+*/ 
+_s(MainView, "skShail9kO25ilQX788tJ78Yq3c=");
 _c = MainView;
 var _c;
 $RefreshReg$(_c, "MainView");
@@ -27182,7 +27443,7 @@ $RefreshReg$(_c, "MainView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../movie-card/movie-card":"bwuIu","../movie-view/movie-view":"ggaUx","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq"}],"bwuIu":[function(require,module,exports) {
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","../movie-card/movie-card":"bwuIu","../movie-view/movie-view":"ggaUx","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq","../login-view/login-view":"9YtA0","../registration-view/registration-view":"3U8r7"}],"bwuIu":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$67b2 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -28244,6 +28505,266 @@ $RefreshReg$(_c, "MovieView");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq"}],"lJZlQ":[function() {},{}]},["6SU3h","ltBpi","d8Dch"], "d8Dch", "parcelRequirebd96")
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq"}],"9YtA0":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$9fee = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$9fee.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LoginView", ()=>LoginView);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _registrationView = require("../registration-view/registration-view");
+var _registrationViewDefault = parcelHelpers.interopDefault(_registrationView);
+var _loginView = require("../login-view/login-view");
+var _loginViewDefault = parcelHelpers.interopDefault(_loginView);
+var _s = $RefreshSig$();
+const LoginView = ({ onLoggedIn  })=>{
+    _s();
+    const [username, setUsername] = (0, _react.useState)("");
+    const [password, setPassword] = (0, _react.useState)("");
+    const handleSubmit = (event)=>{
+        //this prevents the default behavior of the form which is to reload the entire page
+        event.preventDefault();
+        const data1 = {
+            Username: username,
+            Password: password
+        };
+        fetch("https://guarded-wave-99547.herokuapp.com/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data1)
+        }).then((response)=>response.json()).then((data1)=>{
+            console.log("Login response: ", data1);
+            if (data1.user) onLoggedIn(data1.user, data1.token);
+            else alert("No such user");
+        }).catch((e)=>{
+            alert("Something went wrong with your login");
+        });
+    };
+    if (data.user) {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("token", data.token);
+        onLoggedIn(data.user, data.token);
+    } else alert("No such user");
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+        onSubmit: handleSubmit,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Username:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "text",
+                        value: username,
+                        onChange: (e)=>setUsername(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/login-view/login-view.jsx",
+                        lineNumber: 51,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 49,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Password:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "password",
+                        value: password,
+                        onChange: (e)=>setPassword(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/login-view/login-view.jsx",
+                        lineNumber: 60,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 58,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                type: "submit",
+                children: "Submit"
+            }, void 0, false, {
+                fileName: "src/components/login-view/login-view.jsx",
+                lineNumber: 67,
+                columnNumber: 13
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/login-view/login-view.jsx",
+        lineNumber: 48,
+        columnNumber: 9
+    }, undefined);
+};
+_s((0, _loginViewDefault.default), "Lrw7JeD9zj6OUWhT/IH4OIvPKEk=");
+_c = (0, _loginViewDefault.default);
+var _c;
+$RefreshReg$(_c, "LoginView");
+
+  $parcel$ReactRefreshHelpers$9fee.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq","react":"21dqq","../login-view/login-view":"9YtA0","../registration-view/registration-view":"3U8r7"}],"3U8r7":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$789c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$789c.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "RegistrationView", ()=>RegistrationView);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _s = $RefreshSig$();
+const RegistrationView = ()=>{
+    _s();
+    const [username, setUsername] = (0, _react.useState)("");
+    const [password, setPassword] = (0, _react.useState)("");
+    const [email, setEmail] = (0, _react.useState)("");
+    const [birthday, setBirthday] = (0, _react.useState)("");
+    const handleSubmit = (event)=>{
+        event.preventDefault();
+        const data = {
+            Username: username,
+            Password: password,
+            Email: email,
+            Birthday: birthday
+        };
+        fetch("https://guarded-wave-99547.herokuapp.com/", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then((response)=>{
+            if (response.ok) {
+                alert("You've signed up successfully!");
+                window.location.reload();
+            } else alert("Signup failed, please try again");
+        });
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+        onSubmit: handleSubmit,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Username:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "text",
+                        value: username,
+                        onChange: (e)=>setUsername(e.target.value),
+                        required: true,
+                        minLength: "3"
+                    }, void 0, false, {
+                        fileName: "src/components/registration-view/registration-view.jsx",
+                        lineNumber: 40,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/registration-view/registration-view.jsx",
+                lineNumber: 38,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Password:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "password",
+                        value: password,
+                        onChange: (e)=>setPassword(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/registration-view/registration-view.jsx",
+                        lineNumber: 50,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/registration-view/registration-view.jsx",
+                lineNumber: 48,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Email:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "email",
+                        value: email,
+                        onChange: (e)=>setEmail(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/registration-view/registration-view.jsx",
+                        lineNumber: 59,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/registration-view/registration-view.jsx",
+                lineNumber: 57,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                children: [
+                    "Birthday:",
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                        type: "date",
+                        value: birthday,
+                        onChange: (e)=>setBirthday(e.target.value),
+                        required: true
+                    }, void 0, false, {
+                        fileName: "src/components/registration-view/registration-view.jsx",
+                        lineNumber: 68,
+                        columnNumber: 17
+                    }, undefined)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/registration-view/registration-view.jsx",
+                lineNumber: 66,
+                columnNumber: 13
+            }, undefined),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                type: "submit",
+                children: "Submit"
+            }, void 0, false, {
+                fileName: "src/components/registration-view/registration-view.jsx",
+                lineNumber: 75,
+                columnNumber: 13
+            }, undefined)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/registration-view/registration-view.jsx",
+        lineNumber: 37,
+        columnNumber: 9
+    }, undefined);
+};
+_s(RegistrationView, "jsOQN3GC2XlBG9ITlzCdpyJOnso=");
+_c = RegistrationView;
+var _c;
+$RefreshReg$(_c, "RegistrationView");
+
+  $parcel$ReactRefreshHelpers$789c.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"iTorj","react":"21dqq","@parcel/transformer-js/src/esmodule-helpers.js":"iwmME","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"8Zwsq"}],"lJZlQ":[function() {},{}]},["6SU3h","ltBpi","d8Dch"], "d8Dch", "parcelRequirebd96")
 
 //# sourceMappingURL=index.b4b6dfad.js.map
